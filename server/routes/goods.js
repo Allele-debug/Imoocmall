@@ -14,6 +14,7 @@ mongoose.connection.on("disconnected",function(){
 	console.log("MongoDB connected disconnected");
 });
 
+//查询商品列表数据
 router.get('/',function(req,res,next){
 	let page = parseInt(req.param("page"));
 	let pageSize = parseInt(req.param("pageSize"));
@@ -31,8 +32,8 @@ router.get('/',function(req,res,next){
 		}
 		params = {
 			salePrice:{
-				$gt:priceGt,
-				$lte:priceLte
+				$gt:priceGt,//greater than 大于
+				$lte:priceLte//less than or equal to 小于或等于
 			}
 		}
 	}
@@ -55,6 +56,82 @@ router.get('/',function(req,res,next){
 					list:doc
 				}
 			})
+		}
+	})
+});
+
+//加入到购物车
+router.post("/addCart",function(req,res,next){
+	var userId = '100000077';
+	var User = require('../models/users');
+	var productId = req.body.productId;
+	
+	User.findOne({userId:userId},function(err,userDoc){
+		if(err){
+			res.json({
+				status:'1',
+				msg:err.message
+			});
+		}else{
+			// console.log("userDoc"+userDoc);
+			// 遍历检查是否有相同的商品
+			if(userDoc){
+				let goodsItem = '';
+				userDoc.cartList.forEach(function (item){
+					if(item.productId ==productId){
+						goodsItem = item;
+						item.productNum++;
+					}
+				});
+				// 有相同的则数量加1
+				if(goodsItem){
+					userDoc.save(function(err2,doc2){
+						if(err2){
+							console.log("err2");
+							res.json({
+								status:'1',
+								msg:err2.message
+							});
+						}else{
+							res.json({
+								status:'0',
+								msg:'',
+								result:'success'
+							})
+						}
+					})
+				}else{
+					Goods.findOne({productId:productId},function(err1,doc1){
+						if(err1){
+							res.json({
+								status:'1',
+								msg:err1.message
+							});
+						}else{
+							if(doc1){
+								doc1.productNum = 1;
+								doc1.checked = 1;
+								userDoc.cartList.push(doc1);
+								userDoc.save(function(err2,doc2){
+									if(err2){
+										console.log("err2");
+										res.json({
+											status:'1',
+											msg:err2.message
+										});
+									}else{
+										res.json({
+											status:'0',
+											msg:'',
+											result:'success'
+										})
+									}
+								})
+							}
+						}
+					})
+				}
+			}
 		}
 	})
 });
