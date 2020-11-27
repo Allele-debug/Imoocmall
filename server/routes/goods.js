@@ -66,6 +66,7 @@ router.post("/addCart",function(req,res,next){
 	var User = require('../models/users');
 	var productId = req.body.productId;
 	
+	// 查询用户信息，判断是否存在 userDoc
 	User.findOne({userId:userId},function(err,userDoc){
 		if(err){
 			res.json({
