@@ -23,6 +23,27 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// 用express进行登陆拦截
+// 用户操作均进行function，判断是否登陆，否则设置白名单，其他进行拦截
+app.use(function(req,res,next){
+	if(req.cookies.userId){
+		next();
+	}else{
+		// console.log("req.path:"+req.path,"req.org:"+req.originalUrl);
+		// req.path 获取请求的pathname(控制台location.pathname),无视参数影响
+		// req.originalUrl 获取完整的url，包含了参数 分页参数
+		if(req.originalUrl=='/users/login' || req.originalUrl=='/users/logout' || req.path=='/goods'){
+			next();
+		}else{
+			res.json({
+				status:'10001',
+				msg:'当前未登录',
+				result:''
+			})
+		}
+	}
+});
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/goods', goodsRouter);
