@@ -19,7 +19,7 @@
 					<div class="filter stopPop" id="filter" :class="{'filterby-show':filterBy}">
 						<dl class="filter-price">
 							<dt>Price:</dt>
-							<dd><a href="javascript:void(0)">All</a></dd>
+							<dd><a href="javascript:void(0)"@click="showAll()" >All</a></dd>
 							<dd v-for="(item,index) in priceFilter">
 								<a href="javascript:void(0)" @click="setPriceFilter(index)">{{item.startPrice}} - {{item.endPrice}}</a>
 							</dd>
@@ -174,6 +174,11 @@
 						alert("msg:"+res.msg);
 					}
 				});
+			},
+			showAll(){
+				this.priceChecked='all';
+				this.page=1;
+				this.getGoodsList();
 			}
 		}
 	}
