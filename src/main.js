@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import VueLazyload from 'vue-lazyload'
 import infiniteScroll from 'vue-infinite-scroll'
+import './assets/iconfont.js'
 Vue.config.productionTip = false
 
 Vue.use(VueLazyload,{

@@ -1,3 +1,9 @@
+<!-- href="javascript:;" -->
+<!-- javascript: 是一个伪协议
+javascript:是表示在触发<a>默认动作时，执行一段JavaScript代码，而 javascript:; 表示什么都不执行，这样点击<a>时就没有任何反应。
+
+href="javascript:;"就是去掉a标签的默认行为，跟href="javascript:void(0)"是一样的 -->
+
 <template>
 	<div>
 		<nav-header></nav-header>
@@ -9,9 +15,12 @@
 				<div class="filter-nav">
 					<span class="sortby">Sort by:</span>
 					<a href="javascript:void(0)" class="default cur">Default</a>
-					<a href="javascript:void(0)" class="price" @click="sortGoods">Price <svg class="icon icon-arrow-short">
-							<use xlink:href="#icon-arrow-short"></use>
-						</svg></a>
+					<a href="javascript:void(0)" class="price" @click="sortGoods">
+						Price
+						<svg class="icon icon-lower" :class="{'sort-up':!sortFlag}">
+							<use xlink:href="#icon-lower"></use>
+						</svg>
+					</a>
 					<a href="javascript:void(0)" class="filterby stopPop" @click="showFilterPop">Filter by</a>
 				</div>
 				<div class="accessory-result">
@@ -52,13 +61,53 @@
 			</div>
 		</div>
 		<div class="md-overlay" v-show="overLayFlag" @click="closePop"></div>
+		<model :mdShow="mdShow" v-on:close="closeModel">
+			<p slot="message">
+				请先登陆，否则无法加入购物车!
+			</p>
+			<div slot="btnGroup">
+				<a class="btn btn--m" href="javascript:;" @click="mdShow=false">关闭</a>
+			</div>
+		</model>
+		<model :mdShow="mdShowCart" v-on:close="closeModel">
+			<p slot="message">
+				<svg class="icon">
+					<use xlink:href="#icon-chenggong"></use>
+				</svg>
+				<span>加入购物车成功!</span>
+			</p>
+			<div slot="btnGroup">
+				<a class="btn btn--m" href="javascript:;" @click="mdShowCart=false">继续购物</a>
+				<router-link class="btn btn--m" href="javascript:;" to="/cart">查看购物车</router-link>
+			</div>
+		</model>
 		<nav-footer></nav-footer>
 	</div>
 </template>
 
+<style>
+	.icon {
+	  width: 1em;
+	  height: 1em;
+	  vertical-align: -0.15em;
+	  fill: currentColor;
+	  overflow: hidden;
+	}
+	.sort-up{
+		transform:rotate(180deg);
+		transition: all .3s ease-out;
+	}
+	.icon-lower{
+		width: 11px;
+		height: 11px;
+		transition: all .3s ease-out;
+	}
+</style>
+
 <script>
 	import './../assets/css/base.css'
 	import './../assets/css/product.css'
+	import Model from './../components/Model.vue'
 	import NavHeader from '@/components/Header.vue'
 	import NavFooter from '@/components/Footer.vue'
 	import NavBread from '@/components/Bread.vue'
@@ -91,13 +140,16 @@
 				page: 1,
 				pageSize: 8,
 				busy: true,
-				loading:false
+				loading:false,
+				mdShow:false,
+				mdShowCart:false
 			}
 		},
 		components: {
 			NavHeader: NavHeader,
 			NavFooter,
-			NavBread
+			NavBread,
+			Model
 		},
 		mounted() {
 			this.getGoodsList();
@@ -170,9 +222,9 @@
 				}).then((response)=>{
 					let res = response.data;
 					if(res.status==0){
-						alert("加入成功");
+						this.mdShowCart=true;
 					}else{
-						alert("msg:"+res.msg);
+						this.mdShow=true;
 					}
 				});
 			},
@@ -180,9 +232,12 @@
 				this.priceChecked='all';
 				this.page=1;
 				this.getGoodsList();
+			},
+			closeModel(){
+				this.mdShow=false;
+				this.mdShowCart=false;
 			}
 		}
 	}
 </script>
-<style>
-</style>
+<!-- <script src="./../assets/iconfont.js"></script> -->

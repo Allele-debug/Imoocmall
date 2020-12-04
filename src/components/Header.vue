@@ -34,7 +34,7 @@
 		  <div class="md-modal-inner">
 		    <div class="md-top">
 		      <div class="md-title">Login in</div>
-		      <button class="md-close" @click="loginModelFlag=false">Close</button>
+		      <button class="md-close" @click="closeOverLay" >Close</button>
 		    </div>
 		    <div class="md-content">
 		      <div class="confirm-tips">
@@ -58,7 +58,7 @@
 		    </div>
 		  </div>
 		</div>
-		<div class="md-overlay" v-if="loginModelFlag" @click="loginModelFlag=false"></div>
+		<div class="md-overlay" v-if="loginModelFlag" @click="closeOverLay"></div>
 	</header>
 </template>
 
@@ -67,6 +67,7 @@
 	import axios from 'axios'
 	
 	export default{
+		props:["mdShow"],
 		data(){
 			return{
 				userName:'',
@@ -114,6 +115,10 @@
 						this.nickName=''
 					}
 				})
+			},
+			closeOverLay(){
+				this.loginModelFlag=false;
+				this.$emit("close");
 			}
 		}
 	}

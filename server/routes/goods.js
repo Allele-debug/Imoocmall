@@ -98,9 +98,9 @@ router.post("/addCart",function(req,res,next){
 								status:'0',
 								msg:'',
 								result:'success'
-							})
+							});
 						}
-					})
+					});
 				}else{
 					Goods.findOne({productId:productId},function(err1,doc1){
 						if(err1){

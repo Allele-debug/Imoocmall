@@ -23,6 +23,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// 登陆拦截器，必须放在静态资源声明之后、路由导航之前
 // 用express进行登陆拦截
 // 用户操作均进行function，判断是否登陆，否则设置白名单，其他进行拦截
 app.use(function(req,res,next){
