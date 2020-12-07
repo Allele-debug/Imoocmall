@@ -105,8 +105,8 @@ href="javascript:;"就是去掉a标签的默认行为，跟href="javascript:void
 </style>
 
 <script>
-	import './../assets/css/base.css'
-	import './../assets/css/product.css'
+	// import './../assets/css/base.css'
+	// import './../assets/css/product.css'
 	import Model from './../components/Model.vue'
 	import NavHeader from '@/components/Header.vue'
 	import NavFooter from '@/components/Footer.vue'
@@ -240,4 +240,3 @@ href="javascript:;"就是去掉a标签的默认行为，跟href="javascript:void
 		}
 	}
 </script>
-<!-- <script src="./../assets/iconfont.js"></script> -->

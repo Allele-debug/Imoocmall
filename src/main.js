@@ -6,6 +6,9 @@ import router from './router'
 import VueLazyload from 'vue-lazyload'
 import infiniteScroll from 'vue-infinite-scroll'
 import './assets/iconfont.js'
+import './assets/css/base.css'
+import './assets/css/product.css'
+import './assets/css/checkout.css'
 Vue.config.productionTip = false
 
 Vue.use(VueLazyload,{

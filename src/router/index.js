@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import GoodsList from './../views/GoodsList'
+import Cart from '@/views/Cart'
 // import Title from '@/views/Title'
 // import Image from '@/views/Image'
 // import Cart from '@/views/Cart'
@@ -31,5 +32,10 @@ export default new Router({
 	// 	component:Cart,
 	// 	name:'Cart'
 	// }
+	{
+		path:'/cart',
+		name:'Cart',
+		component:Cart
+	}
   ]
 })
