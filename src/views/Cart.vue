@@ -94,7 +94,7 @@
 		            </div>
 		            <div class="cart-tab-5">
 		              <div class="cart-item-opration">
-		                <a href="javascript:;" class="item-edit-btn">
+		                <a href="javascript:;" class="item-edit-btn" @click="delCartConfirm(item.productId)">
 		                  <svg class="icon icon-del">
 		                    <use xlink:href="#icon-del"></use>
 		                  </svg>
@@ -129,6 +129,13 @@
 		    </div>
 		  </div>
 		</div>
+		<model :mdShow="modelConfirm" @close="closeModel">
+			<p slot="message">你确定要删除此条数据吗？</p>
+			<div slot="btnGroup">
+				<a class="btn btn--m" href="javascript:;" @click="delCart()">确认</a>
+				<a class="btn btn--m" href="javascript:;" @click="closeModel()">关闭</a>
+			</div>
+		</model>
 		<nav-footer></nav-footer>
 	</div>
 </template>
@@ -167,7 +174,9 @@
 	export default{
 		data(){
 			return {
-				cartList:[]
+				cartList:[],
+				modelConfirm:false,
+				productId:''
 			}
 		},
 		components:{
@@ -182,6 +191,24 @@
 					let res = response.data;
 					this.cartList = res.result;
 				});
+			},
+			delCart(){
+				axios.post("/users/cartDel",{
+					productId:this.productId
+				}).then((response)=>{
+					let res = response.data;
+					if(res.status=='0'){
+						this.modelConfirm=false;
+						this.init();
+					}
+				});
+			},
+			delCartConfirm(productId){
+				this.productId=productId;
+				this.modelConfirm=true;
+			},
+			closeModel(){
+				this.modelConfirm=false;
 			}
 		},
 		mounted() {

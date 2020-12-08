@@ -12,7 +12,7 @@ var userSchema = new mongoose.Schema({
 			"salePrice":Number,
 			"productImage":String,
 			"checked":String,
-			"productNum":String
+			"productNum":Number
 		}
 	],
 	"addressList":Array

@@ -66,6 +66,7 @@ router.post("/addCart",function(req,res,next){
 	var User = require('../models/users');
 	var productId = req.body.productId;
 	
+	
 	// 查询用户信息，判断是否存在 userDoc
 	User.findOne({userId:userId},function(err,userDoc){
 		if(err){
@@ -102,17 +103,17 @@ router.post("/addCart",function(req,res,next){
 						}
 					});
 				}else{
-					Goods.findOne({productId:productId},function(err1,doc1){
+					Goods.findOne({productId:productId},function(err1,doc){
 						if(err1){
 							res.json({
 								status:'1',
 								msg:err1.message
 							});
 						}else{
-							if(doc1){
-								doc1.productNum = 1;
-								doc1.checked = 1;
-								userDoc.cartList.push(doc1);
+							if(doc){
+								doc.productNum = 1;
+								doc.checked = 1;
+								userDoc.cartList.push(doc);
 								userDoc.save(function(err2,doc2){
 									if(err2){
 										console.log("err2");
@@ -125,16 +126,16 @@ router.post("/addCart",function(req,res,next){
 											status:'0',
 											msg:'',
 											result:'success'
-										})
+										});
 									}
-								})
+								});
 							}
 						}
-					})
+					});
 				}
 			}
 		}
-	})
+	});
 });
 
 module.exports = router;

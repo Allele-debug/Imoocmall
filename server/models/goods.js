@@ -6,6 +6,8 @@ var productSchema=new Schema({
 	"productName":String,
 	"salePrice":Number,
 	"productImage":String,
+	"productNum":Number,
+	"checked":String
 });
 
 
