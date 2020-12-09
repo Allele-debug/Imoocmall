@@ -76,13 +76,13 @@
 		              </div>
 		            </div>
 		            <div class="cart-tab-2">
-		              <div class="item-price">{{item.salePrice}}</div>
+		              <div class="item-price">{{item.salePrice | currency('$')}}</div>
 		            </div>
 		            <div class="cart-tab-3">
 		              <div class="item-quantity">
 		                <div class="select-self select-self-open">
 		                  <div class="select-self-area">
-		                    <a class="input-sub" @click="editCart('minu',item)">-</a>
+		                    <a class="input-sub" @click="editCart('minus',item)">-</a>
 		                    <span class="select-ipt">{{item.productNum}}</span>
 		                    <a class="input-add" @click="editCart('add',item)">+</a>
 		                  </div>
@@ -90,7 +90,7 @@
 		              </div>
 		            </div>
 		            <div class="cart-tab-4">
-		              <div class="item-price-total">{{item.productNum*item.salePrice}}</div>
+		              <div class="item-price-total">{{(item.productNum*item.salePrice) | currency('$')}}</div>
 		            </div>
 		            <div class="cart-tab-5">
 		              <div class="cart-item-opration">
@@ -109,8 +109,8 @@
 		      <div class="cart-foot-inner">
 		        <div class="cart-foot-l">
 		          <div class="item-all-check">
-		            <a href="javascipt:;">
-		              <span class="checkbox-btn item-check-btn">
+		            <a href="javascipt:;" @click="toggleCheckAll()">
+		              <span class="checkbox-btn item-check-btn" v-bind:class="{'check':checkAllFlag}">
 		                <svg class="icon icon-chenggong">
 							  <use xlink:href="#icon-chenggong"/>
 						</svg>
@@ -121,7 +121,7 @@
 		        </div>
 		        <div class="cart-foot-r">
 		          <div class="item-total">
-		            Item total: <span class="total-price">500</span>
+		            Item total: <span class="total-price">{{totalPrice | currency('$')}}</span>
 		          </div>
 		          <div class="btn-wrap">
 		            <a class="btn btn--red">Checkout</a>
@@ -173,6 +173,10 @@
 	import NavFooter from './../components/Footer.vue'
 	import NavBread from './../components/Bread.vue'
 	import axios from 'axios'
+	// 由于不是 "export default"默认名,因此引入方法不一样
+	// 引入currency函数
+	import {currency} from './../util/currency'
+	
 	export default{
 		data(){
 			return {
@@ -181,6 +185,16 @@
 				productId:''
 			}
 		},
+		// 过滤器
+		filters:{
+			// 定义过滤器，处理格式如下 ：
+			// 过滤器名：方法（接收的值）{返回处理过的值}
+			// currency:function(val){
+			// 	return "val";
+			
+			currency:currency,
+			// 引入的 './../util/currency' 本身就是一个函数
+			},
 		components:{
 			NavHeader,
 			NavFooter,
@@ -236,6 +250,51 @@
 				}).then((response)=>{
 					let res = response.data;
 				})
+			},
+			toggleCheckAll(){
+				var flag = ! this.checkAllFlag;
+				this.cartList.forEach((item)=>{
+					item.checked = flag;
+				});
+				axios.post("/users/editCheckAll",{
+					checkAll:this.checkAllFlag
+				}).then((response)=>{
+					let res = response.data;
+					if(res.status=='0'){
+						console.log("update success");
+					}
+				})
+			}
+		},
+		computed:{
+			// computed 里的是计算属性，是属性而非方法
+			checkAllFlag:{
+				get:function(){
+					return this.checkedCount == this.cartList.length;
+				},
+				// set:function(){
+					
+				// }
+			},
+			checkedCount:{
+				get:function(){
+					var i =0;
+					this.cartList.forEach((item)=>{
+						if(item.checked=='1'){
+							i++;
+						}
+					});
+					return i;
+				}
+			},
+			totalPrice(){
+				var money=0;
+				this.cartList.forEach((item)=>{
+					if(item.checked=='1'){
+						money=money+parseFloat(item.salePrice)*parseInt(item.productNum);
+					}
+				});
+				return money;
 			}
 		},
 		mounted() {

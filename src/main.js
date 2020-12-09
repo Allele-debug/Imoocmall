@@ -5,11 +5,18 @@ import App from './App'
 import router from './router'
 import VueLazyload from 'vue-lazyload'
 import infiniteScroll from 'vue-infinite-scroll'
+
+// 全局过滤器
+// import {currency from} './util/currency.js'
+
 import './assets/iconfont.js'
 import './assets/css/base.css'
 import './assets/css/product.css'
 import './assets/css/checkout.css'
 Vue.config.productionTip = false
+
+// 使用全局过滤器
+// Vue.use("currency",currency); Vue.use("名称",值) 
 
 Vue.use(VueLazyload,{
 	loading:"/static/loading-svg/loading-bars.svg"
