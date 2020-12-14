@@ -76,7 +76,7 @@
 		              </div>
 		            </div>
 		            <div class="cart-tab-2">
-		              <div class="item-price">{{item.salePrice | currency('$')}}</div>
+		              <div class="item-price">{{item.salePrice | currency}}</div>
 		            </div>
 		            <div class="cart-tab-3">
 		              <div class="item-quantity">
@@ -90,7 +90,7 @@
 		              </div>
 		            </div>
 		            <div class="cart-tab-4">
-		              <div class="item-price-total">{{(item.productNum*item.salePrice) | currency('$')}}</div>
+		              <div class="item-price-total">{{(item.productNum*item.salePrice) | currency}}</div>
 		            </div>
 		            <div class="cart-tab-5">
 		              <div class="cart-item-opration">
@@ -121,10 +121,10 @@
 		        </div>
 		        <div class="cart-foot-r">
 		          <div class="item-total">
-		            Item total: <span class="total-price">{{totalPrice | currency('$')}}</span>
+		            Item total: <span class="total-price">{{totalPrice | currency}}</span>
 		          </div>
 		          <div class="btn-wrap">
-		            <a class="btn btn--red">Checkout</a>
+		            <a class="btn btn--red" v-bind:class="{'btn--dis':checkedCount==0}" @click="checkOut()">Checkout</a>
 		          </div>
 		        </div>
 		      </div>
@@ -191,7 +191,11 @@
 			// 过滤器名：方法（接收的值）{返回处理过的值}
 			// currency:function(val){
 			// 	return "val";
-			
+			// filters: {//局部过滤器 单价
+			//         formatMoney: function (value) {
+			//             return "￥ " + value.toFixed(2);//保留两位小数
+			//         }
+			//     }
 			currency:currency,
 			// 引入的 './../util/currency' 本身就是一个函数
 			},
@@ -264,6 +268,13 @@
 						console.log("update success");
 					}
 				})
+			},
+			checkOut(){
+				if(this.checkedCount>0){
+					this.$router.push({
+						path:"/address"
+					});
+				}
 			}
 		},
 		computed:{
