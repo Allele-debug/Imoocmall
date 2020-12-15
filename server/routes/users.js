@@ -207,4 +207,51 @@ router.get("/addressList",(req,res,next)=>{
 	});
 });
 
+// 设置默认地址
+router.post("/setDefault",function(req,res,next){
+	var userId = req.cookies.userId;
+	var addressId = req.body.addressId;
+	if(!addressId){
+		res.json({
+			status:'1003',
+			msg:"address is null",
+			result:''
+		});
+	}
+	User.findOne({userId:userId},function(err,doc){
+		if(err){
+			res.json({
+				status:'1',
+				msg:err.message,
+				result:''
+			});
+		}else{
+			var addressList = doc.addressList;
+			addressList.forEach((item)=>{
+				if(item.addressId==addressId){
+					item.isDefault = true;
+				}else{
+					item.isDefault = false;
+				}
+			});
+			
+			doc.save(function(err1,doc1){
+				if(err){
+					res.json({
+						status:'1',
+						msg:err.message,
+						result:''
+					});
+				}else{
+					res.json({
+						status:'0',
+						msg:'',
+						result:''
+					});
+				}
+			});
+		}
+	});
+});
+
 module.exports = router;
