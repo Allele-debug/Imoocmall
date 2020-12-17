@@ -103,6 +103,7 @@ router.post("/cartDel",function(req,res,next){
 	User.update({
 		userId:userId
 	},{
+		// $pull 可以删除子文档 cartList
 		$pull:{
 			'cartList':{
 				'productId':productId
@@ -249,6 +250,37 @@ router.post("/setDefault",function(req,res,next){
 						result:''
 					});
 				}
+			});
+		}
+	});
+});
+
+// 删除地址接口
+
+router.post("/delAddress",function(req,res,next){
+	var userId = req.cookies.userId;
+	var addressId = req.body.addressId;
+	User.update({
+		userId:userId
+	},{
+		// $pull 可以删除子文档 addressList
+		$pull:{
+			'addressList':{
+				'addressId':addressId
+			}
+		}
+	},function (err,doc){
+		if(err){
+			res.json({
+				status:'1',
+				msg:err.message,
+				result:''
+			});
+		}else{
+			res.json({
+				status:'0',
+				msg:'',
+				result:''
 			});
 		}
 	});

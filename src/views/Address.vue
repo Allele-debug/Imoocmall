@@ -60,14 +60,14 @@
 		      <div class="addr-list-wrap">
 		        <div class="addr-list">
 		          <ul>
-		            <li v-for="(item,index) in addressListFilter" :class="{'check':checkIndex==index}" @click="checkIndex=index">
+		            <li v-for="(item,index) in addressListFilter" :class="{'check':checkIndex==index}" @click="checkIndex=index;selectAddressId=item.addressId">
 		              <dl>
 		                <dt>{{item.userName}}</dt>
 		                <dd class="address">{{item.streetName}}</dd>
 		                <dd class="tel">{{item.tel}}</dd>
 		              </dl>
 		              <div class="addr-opration addr-del">
-		                <a href="javascript:;" class="addr-del-btn">
+		                <a href="javascript:;" class="addr-del-btn" @click="delAddressConfirm(item.addressId)">
 		                  <svg class="icon icon-del"><use xlink:href="#icon-del"></use></svg>
 		                </a>
 		              </div>
@@ -112,18 +112,27 @@
 		              <div class="name">Standard shipping</div>
 		              <div class="price">Free</div>
 		              <div class="shipping-tips">
-		                <p>Once shipped，Order should arrive in the destination in 1-7 business days</p>
+		                <p>Once shipped锛孫rder should arrive in the destination in 1-7 business days</p>
 		              </div>
 		            </li>
 		          </ul>
 		        </div>
 		      </div>
 		      <div class="next-btn-wrap">
-		        <a class="btn btn--m btn--red">Next</a>
+				<router-link class="btn btn--m btn--red" v-bind:to="{path:'orderConfirm',query:{'addressId':selectAddressId}}">Next</router-link>
 		      </div>
 		    </div>
 		  </div>
 		</div>
+		<model :mdShow="mdAdshow" @close="closeAdModel">
+			<p slot="message">
+				您是否确认要删除此地址？
+			</p>
+			<div slot="btnGroup">
+				<a class="btn btn--m" href="javascript:;" @click="delAddress">确认</a>
+				<a class="btn btn--m" href="javascript:;" @click="mdAdshow=false">取消</a>
+			</div>
+		</model>
 		<nav-footer></nav-footer>
 	</div>
 
@@ -143,7 +152,10 @@
 				addressList:[],
 				limit:3,
 				mrorls:'more',
-				checkIndex:0
+				checkIndex:0,
+				mdAdshow:false,
+				addressId:'',
+				selectAddressId:''
 			}
 		},
 		components:{
@@ -168,15 +180,35 @@
 					this.mrorls = 'more';
 				}
 			},
-			setDefault(addressId,index){
+			setDefault(addressId){
 				axios.post("/users/setDefault",{
 					addressId:addressId
 				}).then((response)=>{
 					let res = response.data;
 					if(res.status=='0'){
+						this.selectAddressId = addressId;
 						this.init();
 					}
 				})
+			},
+			closeAdModel(){
+				this.mdAdshow = false;
+			},
+			delAddress(){
+				axios.post("/users/delAddress",{
+					addressId:this.addressId
+				}).then((response)=>{
+					let res = response.data;
+					if(res.status=='0'){
+						console.log("删除成功");
+						this.mdAdshow = false;
+						this.init();
+					}
+				})
+			},
+			delAddressConfirm(addressId){
+				this.mdAdshow = true;
+				this.addressId = addressId;
 			}
 		},
 		mounted(){
