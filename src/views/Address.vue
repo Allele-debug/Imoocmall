@@ -187,6 +187,9 @@
 					let res = response.data;
 					if(res.status=='0'){
 						this.selectAddressId = addressId;
+						this.checkIndex = index;
+						console.log(index);
+						console.log(this.checkIndex );
 						this.init();
 					}
 				})
@@ -209,10 +212,11 @@
 			delAddressConfirm(addressId){
 				this.mdAdshow = true;
 				this.addressId = addressId;
-			}
+			},
 		},
 		mounted(){
 			this.init();
+			// this.checkSelecIndex();
 		},
 		created(){
 			window.data=this

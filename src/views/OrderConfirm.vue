@@ -119,10 +119,10 @@
 	
 	      <div class="order-foot-wrap">
 	        <div class="prev-btn-wrap">
-	          <button class="btn btn--m">Previous</button>
+			  <router-link class="btn btn--m" to="/address">Previous</router-link>
 	        </div>
 	        <div class="next-btn-wrap">
-	          <button class="btn btn--m btn--red">Proceed to payment</button>
+	          <button class="btn btn--m btn--red" @click="payMent">Proceed to payment</button>
 	        </div>
 	      </div>
 	    </div>
@@ -167,6 +167,24 @@
 						
 						this.orederTotal = this.subTotal+this.shipping-this.discount+this.tax;
 					});
+				});
+			},
+			payMent(){
+				// addressId通过地址栏传递，用 $route获取
+				// $route是局部的，当前页面的路由信息
+				// $route对象表示当前的路由信息，包含了当前 URL 解析得到的信息。包含当前的路径，参数，query对象等
+				var addressId = this.$route.query.addressId;
+				axios.post("/users/payMent",{
+					addressId:addressId,
+					orderTotal:this.orederTotal
+				}).then((response)=>{
+					let res = response.data;
+					if(res.status=='0'){
+						//在输入地址栏输入新的地址信息
+						this.$router.push({
+							path:'/orderSuccess?orderId='+res.result.orderId
+						})
+					}
 				});
 			}
 		},

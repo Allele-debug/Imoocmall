@@ -4,6 +4,7 @@ import GoodsList from './../views/GoodsList'
 import Cart from '@/views/Cart'
 import Address from './../views/Address'
 import OrderConfirm from './../views/OrderConfirm'
+import OrderSuccess from './../views/OrderSuccess'
 
 // import Title from '@/views/Title'
 // import Image from '@/views/Image'
@@ -49,6 +50,11 @@ export default new Router({
 		path:'/orderConfirm',
 		name:'OrderConfirm',
 		component:OrderConfirm
+	},
+	{
+		path:'/orderSuccess',
+		name:'OrderSuccess',
+		component:OrderSuccess
 	}
   ]
 })

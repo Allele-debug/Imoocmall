@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-
+// 加载工具类 util(获取时间工具) module export导出，用require
+require('./../util/util');
 const User = require('./../models/users');
 
 /* GET users listing. */
@@ -285,5 +286,133 @@ router.post("/delAddress",function(req,res,next){
 		}
 	});
 });
+
+// 生成订单
+router.post("/payMent",function(req,res,next){
+	var userId = req.cookies.userId;
+	var orderTotal = req.body.orderTotal;
+	var addressId = req.body.addressId;
+	
+	User.findOne({userId:userId},function(err,doc){
+		if(err){
+			res.json({
+				status:'1',
+				msg:err.message,
+				result:''
+			});
+		}else{
+			// 获取提交购物单上的地址信息
+			var address='';
+			doc.addressList.forEach((item)=>{
+				if(item.addressId==addressId){
+					address=item;
+				}
+			});
+			// 获取购物单上的商品信息
+			// filter 遍历
+			var goodsList=[];
+			doc.cartList.filter((item)=>{
+				if(item.checked=='1'){
+					goodsList.push(item);
+				}
+			});
+			
+			// 订单id的随机生成和创建订单时间
+			// 该订单ID可能相同（不够安全）
+			
+			// 随机数 Math.random()*10 随机一个0<=x<10数字
+			// Math.floor() 向下取整
+			var r1 = Math.floor(Math.random()*10);
+			var r2 = Math.floor(Math.random()*10);
+			// platform 是平台码，用于方便拼接
+			var platform = '662';
+			
+			// 通过工具类提供的 Format 获取系统时间
+			var sysDate = new Date().Format('yyyyMMddhhmmss');
+			var createDate = new Date().Format('yyyy-MM-dd hh:mm:ss');
+			var orderId = platform+r1+sysDate+r2;
+			// 创建订单
+			var order = {
+				orderId:orderId,
+				orderTotal:orderTotal,
+				addressInfo:address,
+				goodsList:goodsList,
+				orderStatus:'1',
+				createDate:createDate
+			};
+			
+			doc.orderList.push(order);
+			
+			doc.save(function(err1,doc1){
+				if(err1){
+					res.json({
+						status:'1',
+						msg:err.message,
+						result:''
+					});
+				}else{
+					res.json({
+						status:'0',
+						msg:'',
+						result:{
+							orderId:order.orderId,
+							orderTotal:order.orderTotal	
+						}
+					});
+				}
+			});
+		}
+	});
+});
+
+// 根据订单Id查询订单信息
+router.get("/orderDetail",function(req,res,next){
+	var userId = req.cookies.userId;
+	var orderId = req.param("orderId");
+	User.findOne({userId:userId},function(err,userInfo){
+		if(err){
+			res.json({
+				status:'1',
+				msg:err.message,
+				result:''
+			});
+		}else{
+			// 遍历用户的订单，根据orderId选出结算的订单
+			var orderList = userInfo.orderList;
+			if(orderList.length>0){
+				var orderTotal = 0;
+				orderList.forEach((item)=>{
+					if(item.orderId == orderId){
+						orderTotal = item.orderTotal;
+					}
+				});
+				// 判断订单是否存在 根据结算总金额判断
+				if(orderTotal>0){
+					res.json({
+						status:'0',
+						msg:'',
+						result:{
+							orderId:orderId,
+							orderTotal:orderTotal
+						}
+					});
+				}else{
+					res.json({
+						status:'12002',
+						msg:'无此订单',
+						result:''
+					});
+				}
+			// 遍历后 所有订单ID均不符合要求 则返回报错
+			}else{
+				res.json({
+					status:'12001',
+					msg:'当前用户无此订单',
+					result:''
+				});
+			}
+		}
+	});
+})
 
 module.exports = router;
